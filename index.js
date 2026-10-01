@@ -53,12 +53,12 @@ export async function webfingerOf (actorId, options = {}) {
       const json = await res.json()
       const actor = await as2.import(json)
       const webfingerProp = await actor.get(WEBFINGER_PROP)
-      if (webfingerProp) {
+      if (webfingerProp && typeof webfingerProp.first === 'string') {
         wf = webfingerProp.first
       } else {
-        const username = await actor.get(USERNAME_PROP)
-        if (username) {
-          wf = `${username.first}@${URL.parse(actorId).hostname}`
+        const usernameProp = await actor.get(USERNAME_PROP)
+        if (usernameProp && typeof usernameProp.first === 'string') {
+          wf = `${usernameProp.first}@${URL.parse(actorId).hostname}`
         }
       }
     }
@@ -66,7 +66,7 @@ export async function webfingerOf (actorId, options = {}) {
     wf = null
   }
 
-  if (wf && wf.startsWith('acct:')) {
+  if (wf && typeof wf === 'string' && wf.startsWith('acct:')) {
     wf = wf.slice(5)
   }
 

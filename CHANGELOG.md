@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Regression tests for numeric WebFinger metadata falling back to a valid
+  `preferredUsername`, and numeric usernames returning `null` when no WebFinger
+  address is available.
 - StandardJS development dependency and `npm run lint` script.
 - npm package file allowlist limiting published contents to the entry point,
   package metadata, README, and license.

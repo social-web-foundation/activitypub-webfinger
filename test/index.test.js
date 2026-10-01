@@ -151,6 +151,39 @@ test('webfingerOf removes the acct: prefix from explicit WebFinger metadata', as
   assert.equal(fetch.mock.callCount(), 1)
 })
 
+test('webfingerOf falls back to preferredUsername when explicit WebFinger metadata is a number', async (t) => {
+  const actorId = 'https://remote.example/user/maple'
+  const response = await globalThis.fetch(actorId)
+  assert.equal(response.status, 200)
+  const actor = await response.json()
+  actor[webfingerProperty] = 42
+  const fetch = t.mock.fn(async () => Response.json(actor, {
+    headers: { 'Content-Type': 'application/activity+json' }
+  }))
+
+  const result = await webfingerOf(actorId, { fetch })
+
+  assert.equal(result, 'maple@remote.example')
+  assert.equal(fetch.mock.callCount(), 1)
+})
+
+test('webfingerOf returns null when preferredUsername is a number and WebFinger metadata is absent', async (t) => {
+  const actorId = 'https://remote.example/user/aspen'
+  const response = await globalThis.fetch(actorId)
+  assert.equal(response.status, 200)
+  const actor = await response.json()
+  delete actor[webfingerProperty]
+  actor.preferredUsername = 42
+  const fetch = t.mock.fn(async () => Response.json(actor, {
+    headers: { 'Content-Type': 'application/activity+json' }
+  }))
+
+  const result = await webfingerOf(actorId, { fetch })
+
+  assert.equal(result, null)
+  assert.equal(fetch.mock.callCount(), 1)
+})
+
 for (const [name, lookup, input, mediaType] of [
   ['actorIdOf', actorIdOf, 'fern@remote.example', 'application/jrd+json'],
   ['webfingerOf', webfingerOf, 'https://remote.example/user/fern', 'application/activity+json']
