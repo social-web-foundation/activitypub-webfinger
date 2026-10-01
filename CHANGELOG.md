@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-01
+
 ### Added
 
 - README Security section documenting SSRF limitations and custom fetch usage
@@ -44,5 +46,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   fallback, fetch failures, invalid JSON and JSON-LD, and ActivityStreams-profiled
   JSON-LD links.
 
-[Unreleased]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/social-web-foundation/activitypub-webfinger/releases/tag/v0.1.0
