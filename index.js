@@ -26,6 +26,13 @@ export async function actorIdOf (wf, options = {}) {
     link = null
   }
 
+  if (link && 'verify' in options && options.verify) {
+    const discovered = await webfingerOf(link, { ...options, verify: false })
+    if (!discovered || discovered !== wf) {
+      link = null
+    }
+  }
+
   return link
 }
 
@@ -57,6 +64,13 @@ export async function webfingerOf (actorId, options = {}) {
     }
   } catch (err) {
     wf = null
+  }
+
+  if (wf && 'verify' in options && options.verify) {
+    const discovered = await actorIdOf(wf, { ...options, verify: false })
+    if (!discovered || discovered !== actorId) {
+      wf = null
+    }
   }
 
   return wf

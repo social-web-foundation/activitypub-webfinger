@@ -6,6 +6,10 @@ Resolve WebFinger addresses to ActivityPub actor IDs and derive WebFinger
 addresses from actor documents. This package uses ECMAScript modules and
 supports an injected Fetch-compatible function.
 
+For background on forward and reverse discovery, see the
+[ActivityPub and WebFinger profile](https://www.w3.org/community/reports/socialcg/CG-FINAL-apwf-20240608/),
+published by the W3C Social Web Incubator Community Group on 8 June 2024.
+
 ## Table of Contents
 
 - [Install](#install)
@@ -48,11 +52,14 @@ Returns a promise for an actor ID string, or `null` if none can be found.
 - `webfinger`: a WebFinger address, such as `river@remote.example`.
 - `options.fetch`: an optional Fetch-compatible function. Defaults to global
   `fetch`.
+- `options.verify`: an optional boolean, defaulting to `false`. When `true`,
+  discovers the returned actor's WebFinger address and requires it to match the
+  input address. A failed verification lookup or mismatch returns `null`.
 
 Queries WebFinger and returns the `href` of the first matching `self` link with
 media type `application/activity+json` or
 `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`.
-It does not fetch the linked actor document.
+It fetches the linked actor document only when verification is enabled.
 
 ### `webfingerOf(actorId, options = {})`
 
@@ -61,15 +68,57 @@ Returns a promise for a WebFinger address string, or `null` if none can be found
 - `actorId`: an ActivityPub actor URL.
 - `options.fetch`: an optional Fetch-compatible function. Defaults to global
   `fetch`.
+- `options.verify`: an optional boolean, defaulting to `false`. When `true`,
+  resolves the discovered WebFinger address and requires the resulting actor ID
+  to match the input actor ID. A failed verification lookup or mismatch returns
+  `null`.
 
 Fetches and imports the actor document. If the document contains
-`https://purl.archive.org/socialweb/webfinger#webfinger`, returns its first value.
+`https://purl.archive.org/socialweb/webfinger#webfinger`, defined by
+[FEP-2c59: Discovery of a Webfinger address from an ActivityPub actor](https://fediverse.codeberg.page/fep/fep/2c59/),
+returns its first value.
 Otherwise, combines the first `preferredUsername` value with the hostname of
 the supplied actor URL, producing an address such as `river@remote.example`.
 
-The fallback is inferred from the actor document; it is not verified with a
-WebFinger lookup and may differ from the account address when the account and
-actor use different domains.
+The fallback is inferred from the actor document and may differ from the account
+address when the account and actor use different domains. Set `verify: true` to
+check that it resolves back to the original actor.
+
+The profile describes verifying that an inferred address resolves back to the
+same actor. Enable this with `webfingerOf(actorId, { verify: true })`.
+
+Both functions use the supplied `fetch` for the initial and verification
+lookups. The reverse lookup runs without verification to avoid recursion.
+When `verify` is `false` or omitted, only the initial lookup is performed,
+regardless of whether a reverse lookup would match. Verification uses exact
+string comparisons; it does not normalize addresses or actor IDs.
+
+The equivalent manual reverse-discovery check resolves the discovered address
+back to an actor ID and compares it with the original:
+
+```js
+const actorId = 'https://remote.example/user/river'
+const address = await webfingerOf(actorId)
+const discoveredActorId = address !== null ? await actorIdOf(address) : null
+const verified = discoveredActorId === actorId
+```
+
+If either lookup fails, `verified` is `false`.
+
+For forward discovery, check whether the discovered actor's reported or inferred
+WebFinger address matches the address you started with. Use
+`actorIdOf(address, { verify: true })`, or perform the check manually:
+
+```js
+const address = 'river@remote.example'
+const actorId = await actorIdOf(address)
+const discoveredAddress = actorId !== null ? await webfingerOf(actorId) : null
+const verified = discoveredAddress === address
+```
+
+If either lookup fails, `verified` is `false`. This is an exact string comparison:
+aliases, an `acct:` prefix, or hostname capitalization can cause a mismatch even
+when the original address resolves to the intended actor.
 
 ## Maintainers
 

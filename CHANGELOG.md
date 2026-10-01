@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## Unreleased
+## [Unreleased]
+
+### Added
+
+- Optional `verify` support in `actorIdOf` and `webfingerOf`, defaulting to
+  `false`. Verification uses the same fetch function for the reverse lookup
+  and returns `null` on failure or an exact-match comparison mismatch.
+- Documentation and 12 tests for matching and mismatching reverse lookups with
+  `verify` enabled, disabled, or omitted.
+
+## [0.1.0] - 2026-10-01
 
 ### Added
 
@@ -19,6 +29,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Tests for WebFinger and actor HTTP 404 responses, missing ActivityPub links,
   preferred username fallback, and actors without either address property.
 - README with installation, usage, and API documentation.
+- References to the ActivityPub and WebFinger profile and FEP-2c59 in the README.
 - Tests for explicit WebFinger metadata and its precedence over the username
   fallback, fetch failures, invalid JSON and JSON-LD, and ActivityStreams-profiled
   JSON-LD links.
+
+[Unreleased]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/social-web-foundation/activitypub-webfinger/releases/tag/v0.1.0
