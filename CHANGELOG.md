@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- StandardJS development dependency and `npm run lint` script.
 - npm package file allowlist limiting published contents to the entry point,
   package metadata, README, and license.
 - Optional `verify` support in `actorIdOf` and `webfingerOf`, defaulting to

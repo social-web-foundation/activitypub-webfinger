@@ -1,5 +1,5 @@
-import { webfinger } from "webfinger"
-import as2 from "activitystrea.ms"
+import { webfinger } from 'webfinger'
+import as2 from 'activitystrea.ms'
 
 const TYPES = [
   'application/activity+json',
@@ -46,7 +46,7 @@ export async function webfingerOf (actorId, options = {}) {
   try {
     const res = await ff(actorId, {
       headers: {
-        'Accept': TYPES.join(', ')
+        Accept: TYPES.join(', ')
       }
     })
     if (res && res.ok) {

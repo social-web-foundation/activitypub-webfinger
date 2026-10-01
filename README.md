@@ -112,10 +112,11 @@ Use [GitHub Issues](https://github.com/social-web-foundation/activitypub-webfing
 for questions, bug reports, and proposed changes. Please discuss substantial
 changes with the maintainer before submitting a pull request.
 
-Install dependencies and run the tests from a local checkout:
+Install dependencies, check StandardJS style, and run the tests from a local checkout:
 
 ```sh
 npm install
+npm run lint
 npm test
 ```
 
