@@ -19,3 +19,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Tests for WebFinger and actor HTTP 404 responses, missing ActivityPub links,
   preferred username fallback, and actors without either address property.
 - README with installation, usage, and API documentation.
+- Tests for explicit WebFinger metadata and its precedence over the username
+  fallback, fetch failures, invalid JSON and JSON-LD, and ActivityStreams-profiled
+  JSON-LD links.

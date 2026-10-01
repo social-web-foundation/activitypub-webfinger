@@ -7,6 +7,8 @@ import {
 } from '@evanp/activitypub-nock'
 import { actorIdOf, webfingerOf } from '../index.js'
 
+const webfingerProperty = 'https://purl.archive.org/socialweb/webfinger#webfinger'
+
 before(() => {
   nockSetup('remote.example')
 })
@@ -109,5 +111,84 @@ test('webfingerOf returns null when neither WebFinger nor preferredUsername is p
   const result = await webfingerOf(actorId, { fetch })
 
   assert.equal(result, null)
+  assert.equal(fetch.mock.callCount(), 1)
+})
+
+for (const hasUsername of [false, true]) {
+  test(`webfingerOf returns explicit WebFinger metadata ${hasUsername ? 'in preference to preferredUsername' : 'without preferredUsername'}`, async (t) => {
+    const actorId = 'https://remote.example/user/cedar'
+    const response = await globalThis.fetch(actorId)
+    assert.equal(response.status, 200)
+    const actor = await response.json()
+    actor[webfingerProperty] = 'birch@accounts.example'
+    if (!hasUsername) {
+      delete actor.preferredUsername
+    }
+    const fetch = t.mock.fn(async () => Response.json(actor, {
+      headers: { 'Content-Type': 'application/activity+json' }
+    }))
+
+    const result = await webfingerOf(actorId, { fetch })
+
+    assert.equal(result, 'birch@accounts.example')
+    assert.equal(fetch.mock.callCount(), 1)
+  })
+}
+
+for (const [name, lookup, input, mediaType] of [
+  ['actorIdOf', actorIdOf, 'fern@remote.example', 'application/jrd+json'],
+  ['webfingerOf', webfingerOf, 'https://remote.example/user/fern', 'application/activity+json']
+]) {
+  test(`${name} returns null when fetch rejects`, async (t) => {
+    const fetch = t.mock.fn(async () => {
+      throw new TypeError('Network failure')
+    })
+
+    const result = await lookup(input, { fetch })
+
+    assert.equal(result, null)
+    assert.equal(fetch.mock.callCount(), 1)
+  })
+
+  test(`${name} returns null when the response contains invalid JSON`, async (t) => {
+    const fetch = t.mock.fn(async () => new Response('{', {
+      headers: { 'Content-Type': mediaType }
+    }))
+
+    const result = await lookup(input, { fetch })
+
+    assert.equal(result, null)
+    assert.equal(fetch.mock.callCount(), 1)
+  })
+}
+
+test('webfingerOf returns null when the actor contains invalid JSON-LD', async (t) => {
+  const fetch = t.mock.fn(async () => Response.json({
+    '@context': 42,
+    id: 'https://remote.example/user/heath',
+    type: 'Person',
+    preferredUsername: 'heath'
+  }, { headers: { 'Content-Type': 'application/activity+json' } }))
+
+  const result = await webfingerOf('https://remote.example/user/heath', { fetch })
+
+  assert.equal(result, null)
+  assert.equal(fetch.mock.callCount(), 1)
+})
+
+test('actorIdOf accepts the ActivityStreams-profiled JSON-LD media type', async (t) => {
+  const actorId = 'https://remote.example/user/willow'
+  const fetch = t.mock.fn(async () => Response.json({
+    subject: 'acct:willow@remote.example',
+    links: [{
+      rel: 'self',
+      type: 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
+      href: actorId
+    }]
+  }, { headers: { 'Content-Type': 'application/jrd+json' } }))
+
+  const result = await actorIdOf('willow@remote.example', { fetch })
+
+  assert.equal(result, actorId)
   assert.equal(fetch.mock.callCount(), 1)
 })
