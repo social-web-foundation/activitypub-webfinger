@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- npm package file allowlist limiting published contents to the entry point,
+  package metadata, README, and license.
 - Optional `verify` support in `actorIdOf` and `webfingerOf`, defaulting to
   `false`. Verification uses the same fetch function for the reverse lookup
   and returns `null` on failure or an exact-match comparison mismatch.
