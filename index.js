@@ -66,6 +66,10 @@ export async function webfingerOf (actorId, options = {}) {
     wf = null
   }
 
+  if (wf && wf.startsWith('acct:')) {
+    wf = wf.slice(5)
+  }
+
   if (wf && 'verify' in options && options.verify) {
     const discovered = await actorIdOf(wf, { ...options, verify: false })
     if (!discovered || discovered !== actorId) {

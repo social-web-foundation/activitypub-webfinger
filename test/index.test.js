@@ -135,6 +135,22 @@ for (const hasUsername of [false, true]) {
   })
 }
 
+test('webfingerOf removes the acct: prefix from explicit WebFinger metadata', async (t) => {
+  const actorId = 'https://remote.example/user/pine'
+  const response = await globalThis.fetch(actorId)
+  assert.equal(response.status, 200)
+  const actor = await response.json()
+  actor[webfingerProperty] = 'acct:user1@social.example'
+  const fetch = t.mock.fn(async () => Response.json(actor, {
+    headers: { 'Content-Type': 'application/activity+json' }
+  }))
+
+  const result = await webfingerOf(actorId, { fetch })
+
+  assert.equal(result, 'user1@social.example')
+  assert.equal(fetch.mock.callCount(), 1)
+})
+
 for (const [name, lookup, input, mediaType] of [
   ['actorIdOf', actorIdOf, 'fern@remote.example', 'application/jrd+json'],
   ['webfingerOf', webfingerOf, 'https://remote.example/user/fern', 'application/activity+json']

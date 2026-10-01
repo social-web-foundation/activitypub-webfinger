@@ -76,7 +76,9 @@ Returns a promise for a WebFinger address string, or `null` if none can be found
 Fetches and imports the actor document. If the document contains
 `https://purl.archive.org/socialweb/webfinger#webfinger`, defined by
 [FEP-2c59: Discovery of a Webfinger address from an ActivityPub actor](https://fediverse.codeberg.page/fep/fep/2c59/),
-returns its first value.
+returns its first value with a leading `acct:` prefix removed. For example,
+`acct:user1@social.example` becomes `user1@social.example`. Prefix removal occurs
+before verification.
 Otherwise, combines the first `preferredUsername` value with the hostname of
 the supplied actor URL, producing an address such as `river@remote.example`.
 

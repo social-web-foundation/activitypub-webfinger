@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and returns `null` on failure or an exact-match comparison mismatch.
 - Documentation and 12 tests for matching and mismatching reverse lookups with
   `verify` enabled, disabled, or omitted.
+- Test for removing the `acct:` prefix from an actor's explicit WebFinger address.
 
 - Apache License, Version 2.0.
 - `actorIdOf` to resolve a WebFinger address to an ActivityPub actor ID.
