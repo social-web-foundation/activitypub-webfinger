@@ -16,4 +16,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `null` results when lookups fail or no result is found.
 - Tests for successful lookups and injected fetch functions using Node's
   built-in test runner and `@evanp/activitypub-nock`.
+- Tests for WebFinger and actor HTTP 404 responses, missing ActivityPub links,
+  preferred username fallback, and actors without either address property.
 - README with installation, usage, and API documentation.
