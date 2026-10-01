@@ -47,7 +47,7 @@ See [CHANGELOG.md](CHANGELOG.md) for changes.
 
 ### `actorIdOf(webfinger, options = {})`
 
-Returns a promise for an actor ID string, or `null` if none can be found.
+An async function that returns an actor ID string, or `null` if none can be found.
 
 - `webfinger`: a WebFinger address, such as `river@remote.example`.
 - `options.fetch`: an optional Fetch-compatible function. Defaults to global
@@ -63,7 +63,7 @@ It fetches the linked actor document only when verification is enabled.
 
 ### `webfingerOf(actorId, options = {})`
 
-Returns a promise for a WebFinger address string, or `null` if none can be found.
+An async function that returns a WebFinger address string, or `null` if none can be found.
 
 - `actorId`: an ActivityPub actor URL.
 - `options.fetch`: an optional Fetch-compatible function. Defaults to global
