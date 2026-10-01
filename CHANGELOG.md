@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-01
+
 ### Added
 
 - Optional `verify` support in `actorIdOf` and `webfingerOf`, defaulting to
@@ -13,10 +15,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   and returns `null` on failure or an exact-match comparison mismatch.
 - Documentation and 12 tests for matching and mismatching reverse lookups with
   `verify` enabled, disabled, or omitted.
-
-## [0.1.0] - 2026-10-01
-
-### Added
 
 - Apache License, Version 2.0.
 - `actorIdOf` to resolve a WebFinger address to an ActivityPub actor ID.
