@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - README Security section documenting SSRF limitations and custom fetch usage
   with `guarded-fetch`, including verification lookups.
+- Weekly Dependabot checks for npm dependencies and GitHub Actions with a
+  seven-day cooldown.
 
 ## [0.1.0] - 2026-10-01
 
