@@ -93,31 +93,11 @@ When `verify` is `false` or omitted, only the initial lookup is performed,
 regardless of whether a reverse lookup would match. Verification uses exact
 string comparisons; it does not normalize addresses or actor IDs.
 
-The equivalent manual reverse-discovery check resolves the discovered address
-back to an actor ID and compares it with the original:
-
-```js
-const actorId = 'https://remote.example/user/river'
-const address = await webfingerOf(actorId)
-const discoveredActorId = address !== null ? await actorIdOf(address) : null
-const verified = discoveredActorId === actorId
-```
-
-If either lookup fails, `verified` is `false`.
-
 For forward discovery, check whether the discovered actor's reported or inferred
 WebFinger address matches the address you started with. Use
-`actorIdOf(address, { verify: true })`, or perform the check manually:
+`actorIdOf(address, { verify: true })`.
 
-```js
-const address = 'river@remote.example'
-const actorId = await actorIdOf(address)
-const discoveredAddress = actorId !== null ? await webfingerOf(actorId) : null
-const verified = discoveredAddress === address
-```
-
-If either lookup fails, `verified` is `false`. This is an exact string comparison:
-aliases, an `acct:` prefix, or hostname capitalization can cause a mismatch even
+Aliases, an `acct:` prefix, or hostname capitalization can cause a mismatch even
 when the original address resolves to the intended actor.
 
 ## Maintainers
