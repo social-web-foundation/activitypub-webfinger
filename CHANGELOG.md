@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- README Security section documenting SSRF limitations and custom fetch usage
+  with `guarded-fetch`, including verification lookups.
+
 ## [0.1.0] - 2026-10-01
 
 ### Added

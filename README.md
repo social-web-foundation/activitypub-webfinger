@@ -12,12 +12,56 @@ published by the W3C Social Web Incubator Community Group on 8 June 2024.
 
 ## Table of Contents
 
+- [Security](#security)
 - [Install](#install)
 - [Usage](#usage)
 - [API](#api)
 - [Maintainers](#maintainers)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Security
+
+This package does not perform server-side request forgery (SSRF) checks. Its
+default transport is global `fetch`, which can connect to private or internal
+network addresses, including through redirects.
+
+When looking up user-supplied addresses or actor URLs, pass a Fetch-compatible
+function through `options.fetch` that enforces your network policy, including
+checks on resolved IP addresses and redirect destinations. Both functions pass
+this fetch function to their verification lookups when `verify` is enabled.
+The `verify` option checks identity consistency; it does not provide SSRF
+protection.
+
+For example, install the optional
+[`guarded-fetch`](https://github.com/vercel-labs/guarded-fetch) package in your
+application:
+
+```sh
+npm install guarded-fetch
+```
+
+Then supply its Fetch-compatible function:
+
+```js
+import { guardedFetch } from 'guarded-fetch'
+import { actorIdOf, webfingerOf } from 'activitypub-webfinger'
+
+const actorId = await actorIdOf('river@remote.example', {
+  fetch: guardedFetch,
+  verify: true
+})
+const address = await webfingerOf('https://remote.example/user/river', {
+  fetch: guardedFetch,
+  verify: true
+})
+```
+
+`guarded-fetch` checks destination IP addresses and redirects to help prevent
+SSRF. It is an optional application dependency, not a dependency of this package.
+Its bare `guardedFetch` function does not limit response-body size; consult its
+documentation when choosing resource limits for your application. Blocked or
+failed discovery requests result in `null`.
 
 ## Install
 
