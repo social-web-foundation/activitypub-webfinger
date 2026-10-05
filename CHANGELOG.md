@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Declare the package entry point explicitly to prevent Node.js DEP0151
+  deprecation warnings when importing activitypub-webfinger.
+
 ## [0.2.1] - 2026-10-05
 
 ### Changed
