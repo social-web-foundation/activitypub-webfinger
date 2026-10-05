@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-05
+
+### Changed
+
+- Updated activitystrea.ms and @evanp/activitypub-nock.
+
 ## [0.2.0] - 2026-10-04
 
 ### Changed
@@ -60,7 +66,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   fallback, fetch failures, invalid JSON and JSON-LD, and ActivityStreams-profiled
   JSON-LD links.
 
-[Unreleased]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/social-web-foundation/activitypub-webfinger/releases/tag/v0.1.0
