@@ -166,6 +166,19 @@ npm test
 
 Tests use Node's built-in test runner and `@evanp/activitypub-nock`.
 
+Run the browser suite in headless Chromium:
+
+```sh
+npx playwright install chromium
+npm run test:browser
+```
+
+The suite bundles the library and its dependencies with esbuild for the browser,
+then tests both lookup directions, verification matches and mismatches, custom
+fetch, HTTP failures, and username fallback. Playwright intercepts requests;
+the tests do not contact external services. Browser installation requires network
+access. CI requires both Node.js and Chromium tests before publishing.
+
 ## License
 
 Licensed under the [Apache License, Version 2.0](LICENSE.md).

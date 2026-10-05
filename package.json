@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "lint": "standard",
-    "test": "node --test"
+    "test": "node --test test/*.test.js",
+    "test:browser": "node --test test/browser/*.test.js"
   },
   "author": "Evan Prodromou",
   "license": "Apache-2.0",
@@ -27,10 +28,12 @@
   ],
   "dependencies": {
     "activitystrea.ms": "^4.0.1",
-    "webfinger": "^0.6.1"
+    "webfinger": "^0.7.0"
   },
   "devDependencies": {
     "@evanp/activitypub-nock": "^1.0.0",
+    "esbuild": "^0.28.2",
+    "playwright": "^1.63.0",
     "standard": "^17.1.2"
   }
 }

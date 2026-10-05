@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- Update `webfinger` to `^0.7.0` for browser-compatible query serialization.
+
+### Added
+
+- Chromium browser tests using an esbuild bundle, covering discovery and
+  verification in both directions, with a required CI job before publishing.
+
 ## [0.1.1] - 2026-10-01
 
 ### Added
