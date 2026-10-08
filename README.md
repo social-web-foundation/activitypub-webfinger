@@ -71,7 +71,7 @@ Install from the repository:
 npm install github:social-web-foundation/activitypub-webfinger
 ```
 
-Use a Node.js version that provides global `fetch` and `URL.parse`.
+Use a Node.js version that provides global `fetch`.
 
 ## Usage
 
@@ -105,6 +105,14 @@ media type `application/activity+json` or
 `application/ld+json; profile="https://www.w3.org/ns/activitystreams"`.
 It fetches the linked actor document only when verification is enabled.
 
+The input address may contain a Unicode username, a Unicode domain, or both,
+such as `élise@例え.example`. For the WebFinger request, the username is
+percent-encoded and the domain is converted to its ASCII Punycode form. In this
+example, the resource is `acct:%C3%A9lise@xn--r8jz45g.example`; this resource is
+then encoded as a query parameter. ASCII Punycode domains are also accepted.
+The returned actor ID is the link's `href` as supplied by the server; its domain
+and path are not converted or decoded.
+
 ### `webfingerOf(actorId, options = {})`
 
 An async function that returns a WebFinger address string, or `null` if none can be found.
@@ -126,6 +134,16 @@ before verification.
 Otherwise, combines the first `preferredUsername` value with the hostname of
 the supplied actor URL, producing an address such as `river@remote.example`.
 
+The actor URL may use a Unicode or ASCII Punycode domain. In the
+`preferredUsername` fallback, the username is preserved as supplied by the actor
+document and the URL's Punycode hostname is converted to Unicode. For example,
+an actor URL on `xn--r8jz45g.example` with `preferredUsername` set to `élise`
+produces `élise@例え.example`.
+
+An explicit `webfinger` value preserves its username and domain as supplied,
+including Unicode, Punycode, or percent-encoding; only a leading `acct:` prefix
+is removed. It takes precedence over the fallback.
+
 The fallback is inferred from the actor document and may differ from the account
 address when the account and actor use different domains. Set `verify: true` to
 check that it resolves back to the original actor.
@@ -145,6 +163,10 @@ WebFinger address matches the address you started with. Use
 
 Aliases, an `acct:` prefix, or hostname capitalization can cause a mismatch even
 when the original address resolves to the intended actor.
+Unicode and Punycode forms of the same domain, percent-encoded and unencoded
+usernames, or different Unicode normalization forms can also cause a mismatch.
+For example, forward verification of `élise@xn--r8jz45g.example` fails if the
+reverse lookup returns `élise@例え.example`.
 
 ## Maintainers
 

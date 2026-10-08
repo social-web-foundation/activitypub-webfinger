@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Nine tests covering non-ASCII usernames and domains in forward discovery,
+  reverse discovery through `preferredUsername`, and explicit `webfinger` metadata.
+- Documentation of Unicode input and output, request encoding, and exact-match
+  verification behavior.
+
+### Changed
+
+- Update `webfinger` to `0.8.*` for Unicode username encoding and Punycode domain
+  conversion in forward discovery.
+- Convert Punycode hostnames to Unicode in the `preferredUsername` reverse
+  discovery fallback using the browser-compatible `punycode` package.
+- Replace `URL.parse` with the `URL` constructor when deriving the fallback hostname.
+
 ## [0.2.2] - 2026-10-05
 
 ### Fixed

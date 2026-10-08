@@ -1,5 +1,6 @@
 import { webfinger } from 'webfinger'
 import as2 from 'activitystrea.ms'
+import { toUnicode } from 'punycode/punycode.es6.js'
 
 const TYPES = [
   'application/activity+json',
@@ -58,7 +59,7 @@ export async function webfingerOf (actorId, options = {}) {
       } else {
         const usernameProp = await actor.get(USERNAME_PROP)
         if (usernameProp && typeof usernameProp.first === 'string') {
-          wf = `${usernameProp.first}@${URL.parse(actorId).hostname}`
+          wf = `${usernameProp.first}@${toUnicode((new URL(actorId)).hostname)}`
         }
       }
     }
