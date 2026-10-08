@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "activitystrea.ms": "^4.0.1",
-    "webfinger": "^0.7.0"
+    "webfinger": "0.8.*"
   },
   "devDependencies": {
     "@evanp/activitypub-nock": "^1.0.0",
