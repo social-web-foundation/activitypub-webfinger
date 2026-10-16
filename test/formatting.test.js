@@ -24,12 +24,12 @@ for (const [name, username, hostname, domain] of cases) {
     assert.equal(fetch.mock.callCount(), 0)
   })
 
-  test(`webfingerFromJson derives a readable handle for ${name}`, async (t) => {
+  test(`webfingerFromJson derives a readable handle for ${name}`, (t) => {
     const fetch = t.mock.method(globalThis, 'fetch', () => {
       throw new Error('Formatting must not fetch')
     })
     assert.equal(typeof wf.webfingerFromJson, 'function')
-    assert.equal(await wf.webfingerFromJson({
+    assert.equal(wf.webfingerFromJson({
       '@context': context,
       type: 'Person',
       id,
@@ -39,9 +39,9 @@ for (const [name, username, hostname, domain] of cases) {
   })
 
   for (const value of [address, `acct:${encodeURIComponent(username)}@${hostname}`]) {
-    test(`webfingerFromJson prefers explicit metadata ${value}`, async () => {
+    test(`webfingerFromJson prefers explicit metadata ${value}`, () => {
       assert.equal(typeof wf.webfingerFromJson, 'function')
-      assert.equal(await wf.webfingerFromJson({
+      assert.equal(wf.webfingerFromJson({
         '@context': context,
         type: 'Person',
         id: 'https://different.example/actors/other',
@@ -87,15 +87,15 @@ for (const json of [null, undefined, '', 42, true, {},
   { '@context': context, id: 'https://remote.example/actors/river', preferredUsername: 42 },
   { '@context': 42, preferredUsername: 'river' }
 ]) {
-  test(`webfingerFromJson rejects invalid or insufficient profile ${JSON.stringify(json)}`, async () => {
+  test(`webfingerFromJson rejects invalid or insufficient profile ${JSON.stringify(json)}`, () => {
     assert.equal(typeof wf.webfingerFromJson, 'function')
-    await assert.rejects(async () => wf.webfingerFromJson(json))
+    assert.throws(() => wf.webfingerFromJson(json))
   })
 }
 
-test('webfingerFromJson accepts explicit metadata without preferredUsername', async () => {
+test('webfingerFromJson accepts explicit metadata without preferredUsername', () => {
   assert.equal(typeof wf.webfingerFromJson, 'function')
-  assert.equal(await wf.webfingerFromJson({
+  assert.equal(wf.webfingerFromJson({
     '@context': context,
     type: 'Person',
     id: 'https://remote.example/actors/river',
@@ -103,13 +103,53 @@ test('webfingerFromJson accepts explicit metadata without preferredUsername', as
   }), 'élise@例え.example')
 })
 
-test('webfingerFromJson falls back when explicit metadata is not a string', async () => {
+test('webfingerFromJson falls back when explicit metadata is not a string', () => {
   assert.equal(typeof wf.webfingerFromJson, 'function')
-  assert.equal(await wf.webfingerFromJson({
+  assert.equal(wf.webfingerFromJson({
     '@context': context,
     type: 'Person',
     id: 'https://remote.example/actors/river',
     preferredUsername: 'river',
     [webfingerProperty]: 42
   }), 'river@remote.example')
+})
+
+test('webfingerFromJson reads compact fields without a context', () => {
+  assert.equal(wf.webfingerFromJson({
+    id: 'https://xn--r8jz45g.example/actors/other',
+    preferredUsername: 'élise'
+  }), 'élise@例え.example')
+})
+
+test('webfingerFromJson prefers the conventional webfinger field', () => {
+  assert.equal(wf.webfingerFromJson({
+    id: 'https://different.example/actors/other',
+    preferredUsername: 'other',
+    webfinger: 'acct:%C3%A9lise@xn--r8jz45g.example'
+  }), 'élise@例え.example')
+})
+
+for (const property of ['preferredUsername', 'as:preferredUsername', 'https://www.w3.org/ns/activitystreams#preferredUsername']) {
+  for (const idProperty of ['id', '@id']) {
+    test(`webfingerFromJson reads ${property} with ${idProperty}`, () => {
+      assert.equal(wf.webfingerFromJson({
+        [idProperty]: 'https://xn--r8jz45g.example/actors/other',
+        [property]: 'élise'
+      }), 'élise@例え.example')
+    })
+  }
+}
+
+test('webfingerFromJson reads conventional fields without interpreting context aliases', (t) => {
+  const fetch = t.mock.method(globalThis, 'fetch', () => {
+    throw new Error('Formatting must not fetch contexts')
+  })
+  assert.equal(wf.webfingerFromJson({
+    '@context': {
+      preferredUsername: 'https://different.example/unrelated'
+    },
+    id: 'https://remote.example/actors/river',
+    preferredUsername: 'river'
+  }), 'river@remote.example')
+  assert.equal(fetch.mock.callCount(), 0)
 })

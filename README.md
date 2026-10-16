@@ -172,22 +172,36 @@ reverse lookup returns `élise@例え.example`.
 
 ### `webfingerFromJson(json)`
 
-An async function that extracts a readable WebFinger address from an actor's
-JSON-LD profile without fetching the actor or performing WebFinger discovery.
+A synchronous function that returns a readable WebFinger address string from
+an actor's JSON profile. It performs no network requests or JSON-LD expansion
+and does not return a Promise.
 
 - `json`: the actor document as a parsed JavaScript object.
 
-Imports the document using its JSON-LD context. The first string value of
-`https://purl.archive.org/socialweb/webfinger#webfinger` takes precedence.
+Recognizes these field names in precedence order:
+
+| Value | Field names, highest precedence first |
+| --- | --- |
+| WebFinger address | `webfinger`, `wf:webfinger`, `https://purl.archive.org/socialweb/webfinger#webfinger` |
+| Username | `preferredUsername`, `as:preferredUsername`, `https://www.w3.org/ns/activitystreams#preferredUsername` |
+| Actor ID | `id`, `@id` |
+
+For each value, the first present field is selected; an invalid value does not
+cause later spellings to be tried. Fields must contain strings, rather than
+JSON-LD arrays or value objects. Context definitions and custom aliases are
+not interpreted.
+
+A string WebFinger address takes precedence over username-based derivation.
 If it starts with `acct:`, the username is percent-decoded and the domain is
 converted from Punycode to Unicode; otherwise the value is returned unchanged.
-When the property is absent or its first value is not a string, derives the
-address from the first `preferredUsername` value and the document's `id` using
+When the selected WebFinger field is absent or is not a string, derives the
+address from the selected username and actor ID using
 `webfingerFromUsername()`.
 
-Throws for invalid input, invalid JSON-LD, or insufficient properties to derive
-an address. Fallback validation errors also propagate. Unlike `webfingerOf()`,
-this helper does not convert errors to `null` or verify the resulting address.
+Throws synchronously for invalid input or insufficient properties to derive
+an address. Address conversion and fallback validation errors also propagate.
+Unlike `webfingerOf()`, this helper does not convert errors to `null` or verify
+the resulting address.
 
 ### `webfingerFromUsername(preferredUsername, id)`
 

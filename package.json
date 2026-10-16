@@ -28,7 +28,6 @@
     "fediverse"
   ],
   "dependencies": {
-    "activitystrea.ms": "^4.1.1",
     "punycode": "^2.3.1",
     "webfinger": "^0.9.1"
   },

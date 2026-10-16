@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** Make `webfingerFromJson()` synchronous, reading compact,
+  prefixed, and full-IRI fields directly without JSON-LD expansion or context
+  fetching; errors are now thrown synchronously.
+
 ## [0.4.0] - 2026-10-16
 
 ### Added

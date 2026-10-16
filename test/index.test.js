@@ -211,20 +211,6 @@ for (const [name, lookup, input, mediaType] of [
   })
 }
 
-test('webfingerOf returns null when the actor contains invalid JSON-LD', async (t) => {
-  const fetch = t.mock.fn(async () => Response.json({
-    '@context': 42,
-    id: 'https://remote.example/user/heath',
-    type: 'Person',
-    preferredUsername: 'heath'
-  }, { headers: { 'Content-Type': 'application/activity+json' } }))
-
-  const result = await webfingerOf('https://remote.example/user/heath', { fetch })
-
-  assert.equal(result, null)
-  assert.equal(fetch.mock.callCount(), 1)
-})
-
 test('actorIdOf accepts the ActivityStreams-profiled JSON-LD media type', async (t) => {
   const actorId = 'https://remote.example/user/willow'
   const fetch = t.mock.fn(async () => Response.json({

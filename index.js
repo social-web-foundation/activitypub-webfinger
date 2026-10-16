@@ -1,5 +1,4 @@
 import { webfinger, fromAcctUri } from 'webfinger'
-import as2 from 'activitystrea.ms'
 import { toUnicode } from 'punycode/punycode.es6.js'
 
 const TYPES = [
@@ -7,8 +6,22 @@ const TYPES = [
   'application/ld+json; profile="https://www.w3.org/ns/activitystreams"'
 ]
 
-const WEBFINGER_PROP = 'https://purl.archive.org/socialweb/webfinger#webfinger'
-const USERNAME_PROP = 'https://www.w3.org/ns/activitystreams#preferredUsername'
+const ID_PROPS = [
+  'id',
+  '@id'
+]
+
+const WEBFINGER_PROPS = [
+  'webfinger',
+  'wf:webfinger',
+  'https://purl.archive.org/socialweb/webfinger#webfinger'
+]
+
+const USERNAME_PROPS = [
+  'preferredUsername',
+  'as:preferredUsername',
+  'https://www.w3.org/ns/activitystreams#preferredUsername'
+]
 
 export async function actorIdOf (wf, options = {}) {
   const ff = ('fetch' in options && options.fetch)
@@ -90,20 +103,25 @@ export function webfingerFromUsername (preferredUsername, id) {
   return `${preferredUsername}@${toUnicode(url.hostname)}`
 }
 
-export async function webfingerFromJson (json) {
+export function webfingerFromJson (json) {
   if (!json || typeof json !== 'object') {
     throw new TypeError('json must be an object')
   }
-  const actor = await as2.import(json)
-  const webfingerProp = await actor.get(WEBFINGER_PROP)
-  const usernameProp = await actor.get(USERNAME_PROP)
-  if (webfingerProp && typeof webfingerProp.first === 'string') {
-    const wf = webfingerProp.first
+  const idProp = ID_PROPS.find(prop => prop in json)
+  const usernameProp = USERNAME_PROPS.find(prop => prop in json)
+  const webfingerProp = WEBFINGER_PROPS.find(prop => prop in json)
+
+  if (webfingerProp && typeof json[webfingerProp] === 'string') {
+    const wf = json[webfingerProp]
     return (wf.startsWith('acct:'))
       ? fromAcctUri(wf)
       : wf
-  } else if (actor.id && usernameProp && typeof usernameProp.first === 'string') {
-    return webfingerFromUsername(usernameProp.first, actor.id)
+  } else if (idProp &&
+      typeof json[idProp] === 'string' &&
+      usernameProp &&
+      typeof json[usernameProp] === 'string'
+  ) {
+    return webfingerFromUsername(json[usernameProp], json[idProp])
   } else {
     throw new Error('Not enough properties to determine a webfinger address')
   }
