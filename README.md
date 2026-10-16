@@ -28,7 +28,7 @@ network addresses, including through redirects.
 
 When looking up user-supplied addresses or actor URLs, pass a Fetch-compatible
 function through `options.fetch` that enforces your network policy, including
-checks on resolved IP addresses and redirect destinations. Both functions pass
+checks on resolved IP addresses and redirect destinations. Both discovery functions pass
 this fetch function to their verification lookups when `verify` is enabled.
 The `verify` option checks identity consistency; it does not provide SSRF
 protection.
@@ -125,14 +125,17 @@ An async function that returns a WebFinger address string, or `null` if none can
   to match the input actor ID. A failed verification lookup or mismatch returns
   `null`.
 
-Fetches and imports the actor document. If the document contains
+Fetches the actor document and delegates address extraction to
+`webfingerFromJson()`. If the document contains
 `https://purl.archive.org/socialweb/webfinger#webfinger`, defined by
 [FEP-2c59: Discovery of a Webfinger address from an ActivityPub actor](https://fediverse.codeberg.page/fep/fep/2c59/),
-returns its first value with a leading `acct:` prefix removed. For example,
-`acct:user1@social.example` becomes `user1@social.example`. Prefix removal occurs
-before verification.
+returns its first string value. An `acct:` URI is converted to a readable
+address by decoding the username and converting its Punycode domain to Unicode.
+For example, `acct:%C3%A9lise@xn--r8jz45g.example` becomes `élise@例え.example`.
+This conversion occurs before verification.
 Otherwise, combines the first `preferredUsername` value with the hostname of
-the supplied actor URL, producing an address such as `river@remote.example`.
+the actor document's `id`, producing an address such as `river@remote.example`.
+The fallback requires an HTTPS actor ID.
 
 The actor URL may use a Unicode or ASCII Punycode domain. In the
 `preferredUsername` fallback, the username is preserved as supplied by the actor
@@ -140,9 +143,8 @@ document and the URL's Punycode hostname is converted to Unicode. For example,
 an actor URL on `xn--r8jz45g.example` with `preferredUsername` set to `élise`
 produces `élise@例え.example`.
 
-An explicit `webfinger` value preserves its username and domain as supplied,
-including Unicode, Punycode, or percent-encoding; only a leading `acct:` prefix
-is removed. It takes precedence over the fallback.
+An explicit `webfinger` value without an `acct:` prefix is returned unchanged.
+Explicit metadata takes precedence over the fallback.
 
 The fallback is inferred from the actor document and may differ from the account
 address when the account and actor use different domains. Set `verify: true` to
@@ -167,6 +169,39 @@ Unicode and Punycode forms of the same domain, percent-encoded and unencoded
 usernames, or different Unicode normalization forms can also cause a mismatch.
 For example, forward verification of `élise@xn--r8jz45g.example` fails if the
 reverse lookup returns `élise@例え.example`.
+
+### `webfingerFromJson(json)`
+
+An async function that extracts a readable WebFinger address from an actor's
+JSON-LD profile without fetching the actor or performing WebFinger discovery.
+
+- `json`: the actor document as a parsed JavaScript object.
+
+Imports the document using its JSON-LD context. The first string value of
+`https://purl.archive.org/socialweb/webfinger#webfinger` takes precedence.
+If it starts with `acct:`, the username is percent-decoded and the domain is
+converted from Punycode to Unicode; otherwise the value is returned unchanged.
+When the property is absent or its first value is not a string, derives the
+address from the first `preferredUsername` value and the document's `id` using
+`webfingerFromUsername()`.
+
+Throws for invalid input, invalid JSON-LD, or insufficient properties to derive
+an address. Fallback validation errors also propagate. Unlike `webfingerOf()`,
+this helper does not convert errors to `null` or verify the resulting address.
+
+### `webfingerFromUsername(preferredUsername, id)`
+
+A synchronous function that returns a readable `username@domain` address
+without performing network requests.
+
+- `preferredUsername`: a nonempty, unencoded username string, preserved as supplied.
+- `id`: an absolute HTTPS actor ID string. Its hostname is converted from
+  Punycode to Unicode; its port, path, query, and fragment are excluded.
+
+The returned address has no `acct:` prefix. Throws a `TypeError` for empty or
+non-string arguments, or an error for a malformed URL or a scheme other than HTTPS.
+This helper infers an address; it does not validate the username against PRECIS
+or verify that the address resolves to the actor.
 
 ## Maintainers
 

@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- Public `webfingerFromJson()` and `webfingerFromUsername()` helpers for deriving
+  readable WebFinger addresses locally, with errors for invalid or insufficient
+  input and an HTTPS requirement for actor IDs used in username-based derivation.
+
+### Changed
+
+- Use `webfingerFromJson()` for reverse discovery, decoding percent-encoded
+  usernames and Punycode domains in explicit `acct:` metadata before verification.
+- Derive fallback addresses from the actor document's `id`.
+
 ## [0.3.0] - 2026-10-08
 
 ### Added
