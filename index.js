@@ -65,7 +65,7 @@ export async function webfingerOf (actorId, options = {}) {
     })
     if (res && res.ok) {
       const json = await res.json()
-      wf = await webfingerFromJson(json)
+      wf = webfingerFromJson(json)
     }
   } catch (err) {
     wf = null
