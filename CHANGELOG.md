@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+
+- Update `webfinger`.
+- Update development dependencies: `@evanp/activitypub-nock`, activitystrea.ms,
+  Playwright, and undici.
+
 ## [0.5.0] - 2026-10-16
 
 ### Changed
