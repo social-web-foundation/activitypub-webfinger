@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-24
+
 ### Changed
 
 - Update `webfinger`.
@@ -121,7 +123,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   fallback, fetch failures, invalid JSON and JSON-LD, and ActivityStreams-profiled
   JSON-LD links.
 
-[Unreleased]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/social-web-foundation/activitypub-webfinger/compare/v0.2.2...v0.3.0
